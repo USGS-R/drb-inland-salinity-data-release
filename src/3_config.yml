@@ -1,0 +1,37 @@
+target_default: 3_config
+
+include:
+
+packages:
+  - dplyr
+  - RJSONIO
+  - zip
+
+sources:
+  - src/fetch_filter_functions.R
+  - src/file_functions.R
+
+targets:
+  3_config:
+    depends:
+      - out_data/reservoir_nml_values.json
+
+  ##### Transfer and filtering of files from lake-temperature-model-prep #####
+
+  # nml values in a nested list with one top-level element per site, saved as JSON
+  # read in with RJSONIO::fromJSON()
+  out_data/reservoir_nml_values.json:
+    command: fetch_filter_nml(
+      out_json = target_name,
+      in_ind = '../lake-temperature-model-prep/7_config_merge/out/nml_list.rds.ind',
+      in_repo = I('../lake-temperature-model-prep/'),
+      site_ids = reservoir_modeling_site_ids)
+
+  ##### Archive of files from res-temperature-process-models #####
+
+  # .nml files manually copied and renamed from res-temperature-process-models
+  out_data/reservoir_nml_files.zip:
+    command: zip_files(
+      out_file = target_name,
+      'in_data/glm3_cal_nhdhr_120022743.nml',
+      'in_data/glm3_cal_nhdhr_151957878.nml')

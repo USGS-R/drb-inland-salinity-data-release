@@ -1,0 +1,17 @@
+.DS_Store
+.RProfile
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.RProj
+
+out_data/*
+!out_data/.empty
+
+in_data/*
+!in_data/.empty
+
+.remake/*
+
+

@@ -1,0 +1,105 @@
+target_default: 2_observations
+
+packages:
+  - readr
+  - zip
+  - zoo
+
+sources:
+  - src/file_functions.R
+
+targets:
+  2_observations:
+    depends:
+      - out_data/temperature_observations_drb.zip
+      - out_data/temperature_observations_lordville.zip
+      - out_data/temperature_observations_forecast_sites.zip
+      - out_data/flow_observations_drb.zip
+      - out_data/flow_observations_lordville.zip
+      - out_data/flow_observations_forecast_sites.zip
+      - out_data/reservoir_releases_total.csv
+      - out_data/reservoir_releases_by_type_drb.csv
+      - out_data/reservoir_releases_by_type_lordville.csv
+      - out_data/reservoir_realsat_monthly_surface_area.csv
+      - out_data/reservoir_io_obs.csv
+      - out_data/reservoir_temp_obs.csv
+      - out_data/reservoir_level_obs.csv
+
+  ##### Transfer of files from delaware-model-prep #####
+  # daily flow and temperature data
+  out_data/temperature_observations_drb.zip:
+    command: zip_obs(out_file = target_name, in_file = '../delaware-model-prep/9_collaborator_data/umn/obs_temp_full.csv')
+    
+  out_data/temperature_observations_lordville.zip:
+    command: zip_obs(out_file = target_name, in_file = '../delaware-model-prep/9_collaborator_data/umn/obs_temp_subset_lordville.csv')
+    
+  out_data/temperature_observations_forecast_sites.zip:
+    command: zip_obs(out_file = target_name, in_file = '../delaware-model-prep/2_observations/out/obs_temp_priority_sites.csv')
+  
+  out_data/flow_observations_drb.zip:
+    command: zip_obs(out_file = target_name, in_file = '../delaware-model-prep/9_collaborator_data/umn/obs_flow_full.csv')
+  
+  out_data/flow_observations_lordville.zip:
+    command: zip_obs(out_file = target_name, in_file = '../delaware-model-prep/9_collaborator_data/umn/obs_flow_subset_lordville.csv')
+
+  out_data/flow_observations_forecast_sites.zip:
+    command: zip_obs(out_file = target_name, in_file = '../delaware-model-prep/2_observations/out/obs_flow_priority_sites.csv')
+  
+  out_data/reservoir_releases_total.csv:
+    command: file.copy(from = '../delaware-model-prep/2_observations/out/complete_reservoir_releases.csv', to = target_name)
+
+  out_data/reservoir_releases_by_type_drb.csv:
+    command: file.copy(from = '../delaware-model-prep/2_observations/out/reservoir_releases.csv', to = target_name)
+
+  out_data/reservoir_releases_by_type_lordville.csv:
+    command: filter_reservoirs(out_file = target_name, in_dat = 'out_data/reservoir_releases_by_type.csv', keep = I(c('Pepacton', 'Cannonsville')))
+    
+  # get GRAND IDs of reservoirs above Lordville
+  reservoir_lordville:
+    command: c(I(c('1550', '2192')))
+    
+  out_data/reservoir_realsat_monthly_surface_area.csv:
+    command: file.copy(from = '../delaware-model-prep/2_observations/out/realsat_monthly_surface_area.csv', to = target_name)
+  
+  out_data/reservoir_io_obs.csv:
+    command: copy_filter_feather(
+      out_csv = target_name,
+      in_feather = '../delaware-model-prep/9_collaborator_data/res/res_io_obs.feather',
+      site_ids = reservoir_modeling_site_ids)
+  
+  ##### Transfer and filtering of files of file from lake-temperature-model-prep #####
+  out_data/reservoir_temp_obs.csv:
+    command: fetch_filter_tibble(
+      out_csv = target_name,
+      in_ind = '../lake-temperature-model-prep/7b_temp_merge/out/drb_daily_reservoir_temps.rds.ind',
+      in_repo = I('../lake-temperature-model-prep/'),
+      site_ids = reservoir_modeling_site_ids)
+    
+  out_data/reservoir_level_nwis.csv:
+    command: fetch_filter_tibble(
+      out_csv = target_name,
+      in_ind = '../lake-temperature-model-prep/7a_nwis_munge/out/drb_reservoirs_waterlevels_munged.rds.ind',
+      in_repo = I('../lake-temperature-model-prep/'),
+      site_ids = reservoir_modeling_site_ids)
+      
+  out_data/reservoir_level_nycdep.rds:
+    command: fetch_filter_nycdep(
+      out_rds = target_name,
+      in_ind = '../lake-temperature-model-prep/7a_nwis_munge/out/NYC_DEP_reservoir_waterlevels.rds.ind',
+      in_repo = I('../lake-temperature-model-prep/'),
+      site_ids = reservoir_modeling_site_ids)
+      
+  out_data/reservoir_level_usgs_historical.rds:
+    command: fetch_filter_historical(
+      out_rds = target_name,
+      in_ind = '../delaware-model-prep/2_observations/out/interpolated_daily_reservoir_water_budget_components.csv.ind',
+      in_repo = I('../delaware-model-prep/'),
+      xwalk = I(c('Cannonsville' = 'nhdhr_120022743', 'Pepacton' = 'nhdhr_151957878')))
+      
+  out_data/reservoir_level_obs.csv:
+    command: combine_level_sources(
+      out_csv = target_name,
+      nwis_levels = 'out_data/reservoir_level_nwis.csv',
+      nyc_levels = 'out_data/reservoir_level_nycdep.rds',
+      hist_levels = 'out_data/reservoir_level_usgs_historical.rds')
+      

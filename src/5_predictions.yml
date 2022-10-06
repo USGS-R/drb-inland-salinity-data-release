@@ -1,0 +1,35 @@
+target_default: 5_predictions
+
+include:
+
+packages:
+  - dplyr
+
+sources:
+  - src/fetch_filter_functions.R
+
+targets:
+  5_predictions:
+    depends:
+      - out_data/reservoir_io_sntemp.csv
+      - out_data/reservoir_downstream_preds.csv
+      - out_data/reservoir_outlet_depth_preds.csv
+      - out_data/dwallin_stream_preds.csv
+
+  out_data/reservoir_io_sntemp.csv:
+    command: copy_filter_feather(
+      out_csv = target_name,
+      in_feather = '../delaware-model-prep/9_collaborator_data/res/res_io_sntemp.feather',
+      site_ids = reservoir_modeling_site_ids)
+      
+  out_data/reservoir_downstream_preds.csv:
+    command: file.copy(from = '../res-temperature-process-models/5_extract/out/downstream_preds.csv', to = target_name)
+    
+  out_data/reservoir_outlet_depth_preds.csv:
+    command: file.copy(from = '../res-temperature-process-models/5_extract/out/outlet_depth_preds.csv', to = target_name)
+    
+  out_data/dwallin_stream_preds.csv:
+    command: file.copy(from = '../delaware-model-prep/3_predictions/out/dwallin_stream_preds.csv', to = target_name)
+    
+  out_data/forecast[2021-04-16_2021-07-16]_files.zip:
+    command: file.copy(from = 'in_data/forecast[2021-04-16_2021-07-16]_files.zip', to = target_name)

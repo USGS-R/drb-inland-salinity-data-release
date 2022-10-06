@@ -1,0 +1,561 @@
+title: >-
+  Predicting water temperature in the Delaware River Basin: 2 Water temperature and flow observations
+
+abstract: >-
+  <p>Observations related to water and thermal budgets in the Delaware River Basin. Data from reservoirs in the basin include
+  reservoir characteristics (e.g., bathymetry), daily water levels, daily depth-resolved water temperature observations, 
+  and daily inflows, diversions, and releases. Data from streams in the basin include daily flow and temperature observations.  
+  Data were compiled from a variety of sources to cover the modeling period (1980-2021), including the National Water Inventory System, 
+  Water Quality Portal, EcoSHEDS stream water temperature database, ReaLSAT, and the New York Department of Environmental Conservation.
+  The data are formatted as a single csv (comma separated values) or zipped csv. 
+  
+  
+  <p>For modeling purposes, we sought to create a test set of flow and temperature observations that were representative of 
+  dynamics throughout the Delaware River basin from water year 1980-present. Test holdouts are documented in the 
+  flow and temperature files. To minimize the possibility of the correlation 
+  between sites and temporal autocorrelation at single sites causing artificially high test performance, we created temporal 
+  holdouts (time periods where data from all sites were reserved for testing), and spatial holdouts (sites where all data were 
+  reserved for testing). In all, this resulted in a train/test split of 66.2%/33.8% for observed temperature reach days, 
+  and 71.4%/28.6% for observed flow reach days. 
+  
+  
+  <p>For temporal holdouts: All data in the water years 1980-84, 2011-15, and 2021 were reserved for the test set. 
+  These windows were chosen to attempt to balance the ability to test on the most recent data (critical to assess 
+  performance in an operational setting) and historical periods, while still training on a sufficient amount of 
+  modern continuous data. For spatial holdouts: We chose eight reaches of the PRMS network to reserve all data for testing, 
+  based on representing key parts of the Delaware basin (mainstem, headwaters, reservoir-adjacent reaches), representing 
+  the distribution catchment attributes (e.g. fraction of impervious surfaces) and minimizing the number of observations 
+  within a 20 km distance along the network ('fish radius').
+  
+cross-cites:
+  -
+    authors: ['Ankush Khandelwal', 'Rahul Ghosh', 'Zhihao Wei', 'Huangying Kuang', 'Hilary Dugan', 'Paul Hanson', 'Anuj Karpatne', 'Vipin Kumar']
+    title: >-
+      ReaLSAT: A new Reservoir and Lake Surface Area Timeseries Dataset created using machine learning and satellite imagery
+    pubdate: 2020
+    form: publication
+    link: https://hdl.handle.net/11299/216044
+    
+  -
+    authors: ['U.S. Geological Survey']
+    title: >-
+      USGS Water Data for the Nation, accessed on 2021-07-16
+    pubdate: 2016
+    form: publication
+    link: https://waterdata.usgs.gov/nwis
+  -
+    authors: ['Emily K. Read',  'Lindsay Carr',  'Laura De Cicco',  'Hilary A. Dugan',  'Paul C. Hanson',
+    'Julia A. Hart',  'James Kreft',  'Jordan S. Read',  'Luke A. Winslow']
+    title: >-
+      Water quality data for national-scale aquatic research: The Water Quality Portal, accessed on 2021-04-21
+    pubdate: 2017
+    form: publication
+    link: https://doi.org/10.1002/2016WR019993
+  -
+    authors: NA
+    title: >-
+      SHEDS Stream Temperature Database, accessed on 2020-06-22
+    form: publication
+    link: http://db.ecosheds.org/
+
+entities:
+  -
+    data-name: temperature_observations_{subset}.zip
+    data-description: >- 
+      Daily water temperature observations with sites matched to model river segments in the Delaware River Basin.
+      Files represent various subsets of similar data, and are either sites matched to any of the 456 segments (temperature_observations_drb.zip), 
+      sites matched to a subset of 56 river segments above the
+      Delaware River at Lordville, NY (temperature_observations_lordville.zip), or at the 5 priority forecast sites.
+      Water temperature observations were compiled from NWIS, EcoSHEDS, and WQP. If multiple sites were matched to a single
+      river reach and had measurements on the same day, the values were averaged.
+   
+      Temperature observations for five priority forecasting sites in the Delaware River Basin
+      were first pulled from NWIS, and remaining data gaps in the modeling period
+      were filled if there was data available from other sources (WQP or EcoSHEDS).
+      
+    attributes:
+    -
+      attr-label: subseg_id
+      attr-def:  >-
+        An alternative unique reach identifier which was created in order to split segments such that 
+        segment start and endpoints were connected by one reach with no intersecting reaches. The ID was created
+        using the seg_id from the Geospatial Fabric and an index from one to the number of splits (e.g., {subseg_id}_{index}).
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: seg_id_nat
+      attr-def: >-
+        The closest river reach from the Geospatial Fabric v1.1, by Euclidean distance, from the monitoring site. 
+        Matches were limited to a 500m buffer of the monitoring site. The reach number is from the field "nsegment_v1_1" in the 
+        Geospatial Fabric for the National Hydrologic Model v1.1.
+        
+        
+        Once the original reach match was assigned, the matched segment was reassigned if the endpoint of the 
+        upstream reach was closer to the monitoring site (by river distance) than the endpoint of the matched reach. 
+        If the upstream endpoint was closer, but there was a confluence directly upstream, then the original match was kept.
+      attr-defs:  >-
+        https://doi.org/10.5066/P971JAGF
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: date
+      attr-def: >-
+        Date of temperature measurement
+      attr-defs: This data release
+      data-min: 19080802
+      data-max: 20210408
+      data-units: NA
+    -
+      attr-label: mean_temp_c
+      attr-def: >-
+        Mean daily water temperature
+      attr-defs: This data release
+      data-min: -0.4
+      data-max: 34
+      data-units: degrees C
+    -
+      attr-label: min_temp_c
+      attr-def: >-
+        Minimum daily water temperature
+      attr-defs: This data release
+      data-min: -0.4
+      data-max: 34
+      data-units: degrees C
+    -
+      attr-label: max_temp_c
+      attr-def: >-
+        Maximum daily water temperature
+      attr-defs: This data release
+      data-min: -0.4
+      data-max: 34.9
+      data-units: degrees C
+    -
+      attr-label: site_id
+      attr-def: >-
+        Site identifier from the data provider. For USGS sites, this is the USGS site number with a "USGS-" prefix.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: in_time_holdout
+      attr-def: >-
+        Logical, is the date within the test holdout periods?
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA 
+    -
+      attr-label: in_space_holdout
+      attr-def: >-
+        Logical, is the site a spatial holdouts?
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA 
+    -
+      attr-label: test
+      attr-def: >-
+        Logical, should the observation be used for testing (and withheld from training)?
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA 
+      
+  -
+    data-name: flow_observations_{subset}.zip
+    data-description: >-
+      Daily mean flow observation data with sites matched to model river segments in the Delaware River Basin.
+      Data were compiled from the National Water Information System (NWIS). Three subsets of similar data are provided,
+      including sites from any of the 456 segments (flow_observations_drb.zip), sites from a subset of 56 segments above 
+      the Delaware River at Lordville, NY (flow_observations_lordville.zip), or the 5 priority forecast sites. 
+    attributes:
+    -
+      attr-label: seg_id_nat
+      attr-def: >-
+        The closest river reach from the Geospatial Fabric v1.1, by Euclidean distance, from the monitoring site. 
+        Matches were limited to a 500m buffer of the monitoring site. The reach number is from the field "nsegment_v1_1" in the 
+        Geospatial Fabric for the National Hydrologic Model v1.1.
+        
+        
+        Once the original reach match was assigned, the matched segment was reassigned if the endpoint of the 
+        upstream reach was closer to the monitoring site (by river distance) than the endpoint of the matched reach. 
+        If the upstream endpoint was closer, but there was a confluence directly upstream, then the original match was kept.
+      attr-defs:  >-
+        https://doi.org/10.5066/P971JAGF
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: subseg_id
+      attr-def:  >-
+        An alternative unique reach identifier which was created in order to split segments such that 
+        segment start and endpoints were connected by one reach with no intersecting reaches. The ID was created
+        using the seg_id from the Geospatial Fabric and an index from one to the number of splits (e.g., {subseg_id}_{index}).
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: date
+      attr-def: >-
+        Date of discharge measurement
+      attr-defs: This data release
+      data-min: 18840101
+      data-max: 20210423
+      data-units: NA
+    -
+      attr-label: discharge_cms
+      attr-def: >-
+        River flow or discharge
+      attr-defs: This data release
+      data-min: -180.3047
+      data-max: 7900.4
+      data-units: cubic meters per second
+    -
+      attr-label: site_id
+      attr-def: >-
+        Site identifier from the data provider.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -  
+      attr-label: in_time_holdout
+      attr-def: >-
+        Logical, is the date within the test holdout periods?
+      attr-defs: This data release. 
+      data-min: NA
+      data-max: NA
+      data-units: NA 
+    -
+      attr-label: in_space_holdout
+      attr-def: >-
+        Logical, is the site a spatial holdouts?
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA 
+    -
+      attr-label: test
+      attr-def: >-
+        Logical, should the observation be used for testing (and withheld from training)?
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA 
+
+  -
+    data-name: reservoir_releases_by_type_{subset}.csv
+    data-description: >-
+      Daily reservoir releases from the Pepacton, Neversink, and Cannonsville reservoirs (reservoir_releases_by_type.csv) or
+      from only those reservoirs above the Delaware River at Lordville, NY (reservoir_releases_by_type_lordville.csv).
+      Reservoir release data was provided by the New York City Department of Environmental Protection (NYC DEP). 
+      Gaps in the NYC DEP data were filled by extracting data from the U.S. Geological Survey Office of the Delare River Basin 
+      reports that can be found at https://webapps.usgs.gov/odrm/data/data.html. 
+    attributes:
+    -
+      attr-label: date
+      attr-def: >-
+        Date of water release.
+      attr-defs: This data release
+      data-min: 19820101
+      data-max: 20200422
+      data-units: NA
+    -
+      attr-label: reservoir
+      attr-def: >-
+        Name of reservoir, either Cannonsville, Pepacton, or Neversink.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: release_type
+      attr-def: >-
+        Type of release, including directed releases ("Direct"), conservation releases ("Conserv"), or spillway releases ("Spill").
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: release_volume_cms
+      attr-def: >-
+        Daily volume of the reservoir release.
+      attr-defs: This data release
+      data-min: 0.0
+      data-max: 760.4536
+      data-units: cubic meters per second
+    -
+      attr-label: GRAND_ID
+      attr-def: >-
+        Unique reservoir identifier.
+      attr-defs: Global Reservoir and Dam Database (GRanD)
+      data-min: NA
+      data-max: NA
+      data-units: NA
+  -
+    data-name: reservoir_releases_total.csv
+    data-description: >- 
+      Daily total reservoir releases from the Pepacton, Neversink, and Cannonsville reservoirs.
+      Reservoir release data was provided by the New York City Department of Environmental Protection (NYC DEP). 
+      Gaps in the NYC DEP data were filled by extracting data from the U.S. Geological Survey Office of the Delare River Basin 
+      reports that can be found at https://webapps.usgs.gov/odrm/data/data.html. Release values are total release volumes,
+      such that the different release types from file reservoir_releases_by_type.csv were summed by reservoir-date.
+    
+    attributes:
+    -
+      attr-label: date
+      attr-def: >-
+        Date of water release.
+      attr-defs: This data release
+      data-min: 19820101
+      data-max: 20210709
+      data-units: NA
+    -
+      attr-label: reservoir
+      attr-def: >-
+        Name of reservoir.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: release_volume_cms
+      attr-def: >-
+        Volume of the reservoir release.
+      attr-defs: This data release
+      data-min: 0.0438125
+      data-max: 762.1622
+      data-units: cubic meters per second
+
+  -
+    data-name: reservoir_realsat_monthly_surface_area.csv
+    data-description: >-
+      Estimates of reservoir surface area from 1984-2015 from the ReaLSAT (Reservoir and Lake Surface Area Timeseries) dataset (Khandelwal et. al, 2020). 
+      The dataset was generated using machine learning and Earth Observation satellite imagery. 
+    
+    attributes:
+    -
+      attr-label: reservoir
+      attr-def: >-
+        Name of reservoir
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: date
+      attr-def: >-
+        Date for which reservoir surface area was estimated using satellite data. Surface area was estimated monthly. Data assigned to midpoint of each month.
+      attr-defs: >-
+        This data release
+      data-min: 19840615
+      data-max: 20151215
+      data-units: NA
+    -
+      attr-label: area_m2
+      attr-def: >-
+        Estimate of surface area from the ReaLSAT (Reservoir and Lake Surface Area Timeseries) dataset
+      attr-defs: This data release
+      data-min: 6300
+      data-max: 21941100
+      data-units: m2
+  -
+    data-name: reservoir_io_obs.csv
+    data-description: >-
+      Daily water temperature observations for inflow and outflow reaches of the Pepacton and Cannonsville reservoirs.
+    
+    attributes:
+    -
+      attr-label: res_id
+      attr-def: >-
+        Unique reservoir identification for this dataset, which comes from the Prmnn_I from NHD high-res prefixed with source, as "nhdhr_{Prmnn_I}".
+        
+        
+        nhdhr_120022743 is Cannonsville Reservoir and nhdhr_151957878 is Pepacton Reservoir 
+      attr-defs: >- 
+        http://nhd.usgs.gov/
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: site_id
+      attr-def: >-
+        Site identifier from the data provider.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: date
+      attr-def: >-
+        Date of discharge and temperature observations
+      attr-defs: This data release
+      data-min: 19341001
+      data-max: 20201217
+      data-units: NA
+    -
+      attr-label: flow_cms
+      attr-def: >-
+        Discharge, in cubic meters per second
+      attr-defs: This data release
+      data-min: 0.002831685
+      data-max: 784.3767
+      data-units: cubic meters per second
+    -
+      attr-label: mean_temp_degC
+      attr-def: >-
+        Mean daily observed temperature
+      attr-defs: This data release
+      data-min: 0.1
+      data-max: 27
+      data-units: degrees C
+    -
+      attr-label: min_temp_degC
+      attr-def: >-
+        Minimum daily observed temperature
+      attr-defs: This data release
+      data-min: 0.1
+      data-max: 30.5
+      data-units: degrees C
+    -
+      attr-label: max_temp_degC
+      attr-def: >-
+        Maximum daily observed temperature
+      attr-defs: This data release
+      data-min: 0.1
+      data-max: 30.5
+      data-units: degrees C
+    -
+      attr-label: location
+      attr-def: >-
+        Location relative to reservoir flow direction -- inflow or outflow.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+  -
+    data-name: reservoir_temp_obs.csv
+    data-description: >-
+      Daily water temperature observations for the Pepacton and Cannonsville reservoirs.
+    
+    attributes:
+    -
+      attr-label: site_id
+      attr-def: >-
+        Reservoir identification number for this dataset. Is the Prmnn_I from NHD high-res prefixed with source, as "nhdhr_{Prmnn_I}"
+      
+      
+        nhdhr_120022743 is Cannonsville Reservoir and nhdhr_151957878 is Pepacton Reservoir
+      attr-defs: http://nhd.usgs.gov/
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: date
+      attr-def: >-
+        Date of temperature observation
+      attr-defs: This data release
+      data-min: 19920413
+      data-max: 20210419
+      data-units: NA
+    -
+      attr-label: source_id
+      attr-def: >-
+        Site identifier from the data provider.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: source
+      attr-def: >-
+        Data provider.
+      attr-defs: This data release
+      data-min: 0.1
+      data-max: 50.25
+      data-units: NA
+    -
+      attr-label: depth
+      attr-def: >-
+        Depth of temperature observation
+      attr-defs: This data release.
+      data-min: 0.01
+      data-max: 50.25
+      data-units: meters
+    -
+      attr-label: temp
+      attr-def: >-
+        Water temperature
+      attr-defs: This data release
+      data-min: 1.2
+      data-max: 28.11
+      data-units: degrees C
+  -
+    data-name: reservoir_level_obs.csv
+    data-description: >-
+      Daily water level observations for the Pepacton and Cannonsville reservoirs.
+    
+    attributes:
+    -
+      attr-label: date
+      attr-def: >-
+        Date of temperature observation
+      attr-defs: This data release
+      data-min: 1992-04-13
+      data-max: 2021-04-18
+      data-units: NA
+    -
+      attr-label: source
+      attr-def: >-
+        Data provider
+      attr-defs: This data release.
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: site_id
+      attr-def: >-
+        Reservoir identification number for this dataset. Is the Prmnn_I from NHD high-res prefixed with source, as "nhdhr_{Prmnn_I}"
+        
+        
+        nhdhr_120022743 is Cannonsville Reservoir and nhdhr_151957878 is Pepacton Reservoir
+      attr-defs: http://nhd.usgs.gov/
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: source_id
+      attr-def: >-
+        Site identifier from the data provider.
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+    -
+      attr-label: surface_elevation_m
+      attr-def: >-
+        Elevation of reservoir surface
+      attr-defs: This data release
+      data-min: 324.3255
+      data-max: 391.0523
+      data-units: meters
+    -
+      attr-label: data_type
+      attr-def: >-
+        Type of data - observed daily value (daily observed) or linearly interpolated daily value (daily interpolated)
+      attr-defs: This data release
+      data-min: NA
+      data-max: NA
+      data-units: NA
+
+process-date: !expr format(Sys.time(),'%Y%m%d')
+file-format: comma-delimited files (some compressed into zip files)
+
+indirect-spatial: U.S.A.
+latitude-res: 0.1
+longitude-res: 0.1

@@ -1,0 +1,87 @@
+target_default: 4_inputs
+
+include:
+
+packages:
+  - dplyr
+  - zip
+  - readr
+  - sf
+
+sources:
+  - src/file_functions.R
+  - src/fetch_filter_functions.R
+
+targets:
+  4_inputs:
+    depends:
+      - out_data/distance_matrix.csv
+      - out_data/distance_matrix_lordville.csv
+      - out_data/reach_attributes.csv
+      - out_data/reach_attributes_lordville.csv
+      - out_data/reservoir_features.csv
+      - out_data/reservoir_features_lordville.csv
+      - out_data/sntemp_inputs_outputs.zip
+      - out_data/sntemp_inputs_outputs_lordville.zip
+      - out_data/reservoir_interpolated_daily_water_budget_components.csv
+      - out_data/noaagefs_meteo_files.zip
+      - log/reservoir_meteo_files.yml
+      
+  #weather_drivers:
+   # command: extract_weather_drivers()
+    
+  #out_data/weather_drivers.zip:
+   # command: zip_this(out_file = target_name, in_file = weather_drivers)
+    
+  out_data/distance_matrix_drb.csv:
+    command: get_distance_matrix(out_file = target_name, in_file = '../delaware-model-prep/9_collaborator_data/umn/distance_matrix.rds')
+  
+  ##### Transfer of files from delaware-model-prep #####
+  out_data/distance_matrix_lordville.csv:
+    command: get_distance_matrix(out_file = target_name, in_file = '../delaware-model-prep/9_collaborator_data/umn/distance_matrix_lordville.rds')
+  
+  out_data/reach_attributes_drb.csv:
+    command: extract_reach_attributes(
+      res_file = '../delaware-model-prep/1_network/out/segments_relative_to_reservoirs.rds',
+      attr_file = '../delaware-model-prep/1_network/out/network.rds',
+      out_file = target_name)
+      
+  # filter to the segments upstream of Lordville
+  out_data/reach_attributes_lordville.csv:
+    command: filter_to_subset(out_file = target_name, in_file = 'out_data/reach_attributes.csv', segments = lordville_sites)
+    
+  out_data/reservoir_features_drb.csv:
+    command: file.copy(from = '../delaware-model-prep/9_collaborator_data/umn/reservoir_features.csv', to = target_name)
+    
+  out_data/reservoir_features_lordville.csv:
+    command: filter_res_ids(in_file = 'out_data/reservoir_features.csv', out_file = target_name, res_keep = reservoir_lordville)
+   
+  out_data/sntemp_inputs_outputs_drb.csv:
+    command: get_sntemp_output(out_file = target_name, in_file = '../delaware-model-prep/3_predictions/out/uncal_sntemp_input_output.feather')
+    
+  out_data/sntemp_inputs_outputs_lordville.csv:
+    command: filter_to_subset(out_file = target_name, in_file = 'out_data/sntemp_inputs_outputs.csv', segments = lordville_sites)
+  
+  out_data/sntemp_inputs_outputs_drb.zip:
+    command: zip_obs(out_file = target_name, in_file = 'out_data/sntemp_inputs_outputs.csv')
+
+  out_data/sntemp_inputs_outputs_lordville.zip:
+    command: zip_obs(out_file = target_name, in_file = 'out_data/sntemp_inputs_outputs_lordville.csv')
+  
+  out_data/reservoir_interpolated_daily_water_budget_components.csv:
+    command: file.copy(from = '../delaware-model-prep/2_observations/out/interpolated_daily_reservoir_water_budget_components.csv', to = target_name)
+  
+  # NOAA GEFS meteo files for forecasts
+  out_data/noaagefs_meteo_files.zip:
+    command: file.copy(from = 'in_data/met_drivers.zip', to = target_name)
+    
+  # For now, we're putting meteo files manually into in_data, so all we
+  # do here is confirm that the requisite files exist.
+  # Not quite robust pipelining - if the files in in_data change
+  # but the filenames in nml_list.rds don't,
+  # this target will need to be force-rebuilt
+  log/reservoir_meteo_files.yml:
+    command: fetch_meteo_files(
+      out_yml = target_name,
+      nml_rds = 'out_data/reservoir_nml_list.rds')
+      

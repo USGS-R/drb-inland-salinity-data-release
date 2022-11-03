@@ -2,12 +2,15 @@ title: >-
   Estimating Stream Salinity Impairment Across the Delaware River Basin Using Space- and Time-Aware Machine Learning 
 
 abstract: >-
-  [CHANGE] This data release contains information to support water quality modeling in the Delaware River Basin (DRB).
-  These data support both process-based and machine learning approaches to water quality modeling, including
-  the prediction of stream temperature. Reservoirs in the DRB serve an important role as a source of drinking
-  water, but also affect downstream water quality. Therefore, this data release includes data that
-  characterize both rivers and a subset of reservoirs in the basin. This release provides an update
-  to many of the files provided in a previous data release (Oliver et al., 2021).
+
+  Stream salinity has been increasing for the last four decades across the Delaware River Basin (DRB), 
+  partially due to groundwater storage and release of road salt that is applied for deicing. If left unmanaged,
+  this can have proximate consequences for infrastructure and ecosystems. This data release contains data used for
+  by the Machine learning models aimed at integrating finer-scale spacio-temporal dynamics to estimate stream salinity across
+  the Delaware River Basin and provide insight into salinity-impaired reaches and the processes that drive changes in stream salinity across the DRB,
+  which is critical to informed salinity management. This data release includes data that characterize both
+  rivers and a subset of reservoirs in the basin.
+  
 
   The data are stored in 4 child folders: 1) spatial information, 2) observations, and 3) model driver data, 4) predictions
 

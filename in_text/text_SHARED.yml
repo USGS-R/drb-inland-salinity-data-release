@@ -1,8 +1,9 @@
 authors: ['Jared D. Smith', 'Lauren E. Koenig', 'Margaux J. Sleckman', 'Jeffrey M. Sadler', 'Alison Appling']
-pubdate: 2023
-doi: [CHANGE]https://doi.org/10.5066/P9GUHX1U
+pubdate: 2023 # year of publication for data release
+doi: _CHANGE_ https://doi.org/10.5066/P9GUHX1U
 build-environment: !expr meddle::environment_metadata()
-# ----supporting publications----
+
+# ----supporting publications, source code, data releases----
 cross-cites:
   -
     authors: ['Jacob A. Zwart', 'Samantha K. Oliver', 'William D. Watkins','Jeffrey Sadler','Alison P. Appling','Hayley Corson-Dosch','Xiaowei Jia','Vipin Kumar','Jordan S. Read']
@@ -19,11 +20,11 @@ cross-cites:
 
 
 purpose: Decision support, limnological research, water quality, reservoir management.
-start-date: 19790101
-end-date: 20220406
+start-date: _Change_ 19790101 
+end-date: _Change_ 20220406
 
-update: none planned
-themekeywords: ["water","temperature","water quality","reservoirs","streams","modeling"]
+update: none planned # any updates planned for the data release, can use "none planned"
+themekeywords: ["water","temperature","water quality","reservoirs","streams","modeling"] # keyword reference: https://www.usgs.gov/data-management/keywords
 
 usage-rules: >-
   These data are subject to change and are not citable until reviewed and approved for official publication by the USGS
@@ -31,37 +32,37 @@ usage-rules: >-
 descgeog: "The Delaware River Basin. River reach polylines as defined by the Geospatial Fabric for National Hydrologic Modeling. Reservoir polygons as defined by the national hydrography dataset high resolution"
 data-publisher: U.S. Geological Survey
 indirect-spatial: U.S.A.
-latitude-res: 0.00001
-longitude-res: 0.00001
+latitude-res: _Change_ 0.00001 # lat resolution in degrees
+longitude-res: _Change_ 0.00001 # lat resolution in degrees
 
 # ----contacts----
-contact-person: Margaux J. Sleckman
+contact-person: Margaux J. Sleckman # name of lead modeler to contact with questions
 contact-phone: 608-821-3824
 contact-email: msleckman@usgs.gov
-contact-position: Data Scientist
-contact-address: "1 Gifford Pinchot Dr"
-contact-city: Madison
-contact-state: WI
-contact-zip: 53726
+contact-position: Data Scientist # job title
+contact-address: "1 Gifford Pinchot Dr" # office address
+contact-city: Madison # city of office 
+contact-state: WI # state of office 
+contact-zip: 53726 # zip code of office
 
 metadata-person: Margaux J. Sleckman
 metadata-phone: 608-821-3824
 metadata-fax: 608-821-3817
 metadata-position: Data Scientist
-metadata-email: msleckman@usgs.gov
-metadata-address: "1 Gifford Pinchot Dr"
-metadata-city: Madison
-metadata-state: WI
-metadata-zip: 53726
-metadata-date: 20220504
+metadata-email: msleckman@usgs.gov 
+metadata-address: "1 Gifford Pinchot Dr" # office address
+metadata-city: Madison # city of office 
+metadata-state: WI # state of office 
+metadata-zip: 53726 # zip code of office
+metadata-date: 20220504 # data of metadata creation for data release, in the format YYYYMMDD
 
 accur-test: No formal attribute accuracy tests were conducted.
 funding-credits: >-
   This study was funded by the United States Geological Survey.
   This research used resources of the Core Science Analytics and Synthesis Advanced Research Computing program at the U.S. Geological Survey.
 
-process-description: >-
-  [CHANGE] Uncalibrated process model predictions of river water temperature were generated with a coupled hydrologic-thermodynamic model that uses inputs of reach-specific properties and local meteorology to estimate flow and water temperature.
+process-description: >- # XX # a description of the processing
+  _CHANGE:From temp_:Uncalibrated process model predictions of river water temperature were generated with a coupled hydrologic-thermodynamic model that uses inputs of reach-specific properties and local meteorology to estimate flow and water temperature.
   Our chosen process-based stream model is the open source, Precipitation Runoff Modeling System (PRMS) with the coupled Stream Network Temperature Model (SNTemp) version 5.1.0 RC. PRMS is a
   deterministic model that simulates watershed hydrology as a function of climate and land use, and the coupled SNTemp module simulates the change in stream temperature as a function of
   changes in hydrology and energy.

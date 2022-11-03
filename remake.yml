@@ -1,8 +1,8 @@
 include:
-  - 1_spatial.yml
-  - 2_observations.yml
-  - 3_driver.yml
-  - 4_predictions.yml
+   - 1_spatial.yml
+   - 2_observations.yml
+   - 3_drivers.yml
+   - 4_forecasts.yml
 
 packages:
   - yaml
@@ -20,7 +20,6 @@ packages:
   - tidyverse
 
 sources:
-  #- src/spatial_utils.R
   - src/sb_utils.R
   - src/sb_functions.R
   - src/spatial_functions.R
@@ -28,164 +27,220 @@ sources:
 targets:
   all:
     depends:
-      # - 00_parent_sb_xml
-      - log/00_parent_sb.csv
-      # - 01_spatial_sb_xml
-      - log/01_spatial_sb_data.csv
-      # - 02_observations_sb_xml
-      - log/02_observations_sb_data.csv
-      # - 03_driver_sb_xml
-      - log/03_driver_sb_data.csv
-      # - 03_driver_sb_meteo
+      - 00_parent_sb_xml
+      
+      - 01_spatial_sb_xml
+      - 01_spatial_sb_data
+#      - log/01_spatial_sb_data.csv
+      
+      - 02_observations_sb_data
+      - 02_observations_sb_xml
+#      - log/02_observations_sb_data.csv
+      
+      - 03_drivers_sb_xml
+      - 03_drivers_sb_data
+#      - log/03_drivers_sb_data.csv
+      
+      - 04_forecasts_sb_xml
+      - 04_forecasts_sb_data
+#     - log/04_forecasts_sb_data.csv
+#     - 04_inputs_sb_meteo
 
-# Not longer using this target as it is the fgdc metadata xml that will contain metadata info
-  # out_xml/00_parent.xml:
-  #   command: render(filename = target_name,
-  #     "in_text/text_SHARED.yml",
-  #     "in_text/text_00_parent.yml")
-  #       river_metadata_verts)
-
-  # Build xml for parent item
-  out_xml/00_parent_fgdc_metadata.xml:
+## PARENT ##
+  ## Build xml for parent item and save to out_xml folder
+  out_xml/00_parent.xml:
     command: render(
       filename = target_name,
       "in_text/text_SHARED.yml",
       "in_text/text_00_parent.yml",
-      river_metadata_segs)
+      geospatial_area_metadata
+      )
+  
+  ## Push parent metadata xml to sciencebase
+  00_parent_sb_xml:
+    command: sb_render_post_xml(
+      sbid_00_parent,
+      xml_file = I('00_parent.xml'),
+      "in_text/text_SHARED.yml",
+      "in_text/text_00_parent.yml",
+      geospatial_area_metadata
+      )
+  
+  ## Push parent metadata xml to sb via log file 
+  ## Note: use this target only if you are having trouble seeing changes to sciencebase item 
+  # log/00_parent_sb.csv:
+  #   command: sb_replace_files(
+  #     filename = target_name,
+  #     sb_id = sbid_00_parent,
+  #     sources = 'src/sb_utils.R',
+  #     'out_xml/00_parent.xml')
 
-  ## Push metadata xml to sb
-  log/00_parent_sb.csv:
-    command: sb_replace_files(
+## SPATIAL ## 
+  ## Build metadata xml for spatial data and save locally to out_xml
+  out_xml/01_spatial.xml:
+    command: render(
       filename = target_name,
-      sb_id = sbid_00_parent,
-      sources = 'src/sb_utils.R',
-      'out_xml/00_parent_fgdc_metadata.xml')
-
-  ## Original xml metadata target for parent - Leaving out for now
-  # 00_parent_sb_xml:
-  #   command: sb_render_post_xml(sbid_00_parent,
-  #     xml_file = I('00_parent.xml'),
-  #     "in_text/text_SHARED.yml",
-  #     "in_text/text_00_parent.yml",
-  #     river_metadata_verts)
-
-  ## Build xml for spatial
-  out_xml/01_spatial_fgdc_metadata.xml:
-    command: render(filename = target_name,
       "in_text/text_SHARED.yml",
       "in_text/text_01_spatial.yml",
-      river_metadata_segs)
+      geospatial_area_metadata
+      )
 
-  ## Push all spatial data + metadata xml to sb
-  log/01_spatial_sb_data.csv:
+  ## Push spatial metadata to sciencebase
+  01_spatial_sb_xml:
+    command: sb_render_post_xml(
+      sbid_01_spatial,
+      xml_file = I('01_spatial.xml'),
+      "in_text/text_SHARED.yml",
+      "in_text/text_01_spatial.yml",
+      geospatial_area_metadata
+      )
+  
+  ## Push spatial data metadata to sciencebase
+  01_spatial_sb_data:
     command: sb_replace_files(
-      filename = target_name,
       sb_id = sbid_01_spatial,
-      sources = 'src/sb_utils.R',
-      "out_data/study_stream_reaches.zip",
-      "out_data/study_monitoring_sites.zip",
-      'out_xml/01_spatial_fgdc_metadata.xml')
+      "out_data/XX_geospatial_area_WG84.zip"
+      )
+      
+  ### Push all spatial data + metadata xml to sb
+  # log/01_spatial_sb_data.csv:
+  #   command: sb_replace_files_log(
+  #     filename = target_name,
+  #     sb_id = sbid_01_spatial,
+  #     sources = "src/sb_utils.R",
+  #     "out_data/XX_geospatial_area_WG84.zip",
+  #     "out_xml/01_spatial.xml")
 
-  ## original xml metadata target for spatial - Leaving out for now
-  # 01_spatial_sb_xml:
-  #   command: sb_render_post_xml(
-  #     sbid_01_spatial,
-  #     xml_file = I('01_spatial_sb.xml'),
-  #     "in_text/text_SHARED.yml",
-  #     "in_text/text_01_spatial.yml",
-  #     river_metadata_segs)
-
-  ## build metadata xml for observations
-  out_xml/02_observations_fgdc_metadata.xml:
-    command: render(filename = target_name,
+## OBSERVATIONS ## 
+  ## Build metadata xml for obs data and save locally to out_xml
+  out_xml/02_observations.xml:
+    command: render(
+      filename = target_name,
       "in_text/text_SHARED.yml",
       "in_text/text_02_observations.yml",
-      river_metadata_segs)
-
-  ## Push all obs data + metadata xml to sb
-  log/02_observations_sb_data.csv:
-    command: sb_replace_files(
-      filename = target_name,
-      sb_id = sbid_02_observations,
-      sources = 'src/sb_utils.R',
-      'out_data/unaggregated_temperature_observations_drb.zip',
-      'out_data/aggregated_temperature_observations_drb.zip',
-      'out_data/flow_observations_drb.zip',
-      "out_data/reservoir_temp_obs.csv",
-      "out_data/reservoir_level_obs.csv",
-      "out_data/reservoir_releases_by_type_drb.csv",
-      'in_data/02_observations/reservoir_diversions.csv',
-      'out_xml/02_observations_fgdc_metadata.xml')
-
-  ## original xml metadata target for spatial - Leaving out for now
-  # 02_observations_sb_xml:
-  #   command: sb_render_post_xml(sbid_02_observations,
-  #     xml_file = I('02_observations.xml'),
-  #     "in_text/text_SHARED.yml",
-  #     "in_text/text_02_observations.yml",
-  #     river_metadata_segs)
-
-  ## Build metadata xml for driver data
-  out_xml/03_driver_fgdc_metadata.xml:
-    command: render(filename = target_name,
+      geospatial_area_metadata
+      )
+  
+  ## Push obs data metadata to sciencebase
+  02_observations_sb_xml:
+    command: sb_render_post_xml(
+      sbid_02_observations,
+      xml_file = I('02_observations.xml'),
       "in_text/text_SHARED.yml",
-      "in_text/text_03_driver.yml",
-      river_metadata_segs
+      "in_text/text_02_observations.yml",
+      geospatial_area_metadata
       )
-
-  ## Push all obs data + xml to sb
-  log/03_driver_sb_data.csv:
+      
+  ## Push obs data to sciencebase
+  02_observations_sb_data:
     command: sb_replace_files(
-      filename = target_name,
-      sb_id = sbid_03_driver,
-      sources = 'src/sb_utils.R',
-      'out_data/distance_matrix_drb.csv',
-      'out_data/gridmet_drb_agg_csv.zip',
-      'out_data/gridmet_drb_agg_nc.zip',
-      'out_data/reanalysis_gefs_drb.zip',
-      'out_data/uncal_sntemp_input_output.zip',
-      'out_xml/03_driver_fgdc_metadata.xml'
+      sbid_02_observations,
+      "out_data/XX_observations.zip"
       )
-
-  # 03_driver_sb_xml:
-  #   command: sb_render_post_xml(sbid_03_driver,
-  #     xml_file = I('03_driver.xml'),
-  #     "in_text/text_SHARED.yml",
-  #     "in_text/text_03_driver.yml")
-  #      river_metadata_verts
-
-  ## Push all obs data + metadata xml to sb
-  log/04_predictions_sb_data.csv:
-    command: sb_replace_files(
+  
+  ## Push all obs data + metadata xml to sb via log file 
+  ## Note: use this target only if you are having trouble seeing changes to sciencebase item 
+  # log/02_observations_sb_data.csv:
+  #   command: sb_replace_files_log(
+  #     filename = target_name,
+  #     sb_id = sbid_02_observations,
+  #     sources = "src/sb_utils.R",
+  #     "out_data/XX_observations.zip",
+  #     "out_xml/02_observations.xml")
+ 
+## DRIVER ## 
+  ## Build metadata xml for driver and save locally to out_xml
+  out_xml/03_drivers.xml:
+    command: render(
       filename = target_name,
-      sb_id = sbid_04_predictions,
-      sources = 'src/sb_utils.R',
-      'out_xml/04_predictions_fgdc_metadata.xml')
-
-
-  ## Build metadata xml for driver data
-  out_xml/04_predictions_fgdc_metadata.xml:
-    command: render(filename = target_name,
       "in_text/text_SHARED.yml",
-      "in_text/text_04_predictions.yml",
-      river_metadata_segs
+      "in_text/text_03_drivers.yml",
+      geospatial_area_metadata
       )
+  
+  ## Push driver metadata to sciencebase
+  03_drivers_sb_xml:
+    command: sb_render_post_xml(
+      sbid_03_drivers,
+      xml_file = I('03_drivers.xml'),
+      "in_text/text_SHARED.yml",
+      "in_text/text_03_drivers.yml",
+      geospatial_area_metadata
+      )
+
+  ## Push driver data to sciencebase
+  03_drivers_sb_data:
+    command: sb_replace_files(
+      sbid_03_drivers,
+      'out_data/XX_driver_data_1.zip',
+      'out_data/XX_driver_data_2.zip'
+      )
+      
+  ## Push all driver data + metadata xml to sb via log file 
+  ## Note: use this target only if you are having trouble seeing changes to sciencebase item 
+  # log/03_drivers_sb_data.csv:
+  #   command: sb_replace_files_log(
+  #     filename = target_name,
+  #     sb_id = sbid_03_drivers,
+  #     sources = 'src/sb_utils.R',
+  #     out_data/XX_driver_data_1.zip',
+  #     'out_data/XX_driver_data_2.zip',
+  #     'out_xml/03_drivers.xml'
+  #     )
+
+## FORECASTS ## 
+ ## Build metadata xml for forecasts and save locally to out_xml
+  out_xml/04_forecasts.xml:
+    command: render(
+      filename = target_name,
+      "in_text/text_SHARED.yml",
+      "in_text/text_04_forecasts.yml",
+      geospatial_area_metadata
+      )
+
+ ## Push forecasts metadata to sciencebase
+  04_forecasts_sb_xml:
+    command: sb_render_post_xml(
+      sbid_04_forecasts,
+      xml_file = I('04_forecasts.xml'),
+      "in_text/text_SHARED.yml",
+      "in_text/text_04_forecasts.yml",
+       geospatial_area_metadata
+       )
+  
+  ## Push forecasts data to sciencebase 
+  04_forecasts_sb_data:
+    command: sb_replace_files(
+      sbid_04_forecasts,
+      'out_data/XX_forecasts1.zip',
+      'out_data/XX_forecasts2.zip'
+      )
+
+  ## Push all forecasts data + metadata xml to sb via log file 
+  ## Note: use this target only if you are having trouble seeing changes to sciencebase item 
+  # log/04_forecasts_sb_data.csv:
+  #   command: sb_replace_files_log(
+  #     filename = target_name,
+  #     sb_id = sbid_04_forecasts,
+  #     sources = 'src/sb_utils.R',
+  #     'out_data/XX_forecasts1.zip',
+  #     'out_data/XX_forecasts2.zip',
+  #     'out_xml/04_forecasts.xml'
+  #     )
 
   # ------ SB IDs --------
 
   sbid_00_parent:
-    command: c(I(''))
+    command: c(I('XX_sb_id_parent')) # 
 
   sbid_01_spatial:
-    command: c(I(''))
+    command: c(I('XX_sb_id_spatial')) # 
 
   sbid_02_observations:
-    command: c(I(''))
+    command: c(I('XX_sb_id_observations')) # 
 
-  sbid_03_driver:
-    command: c(I(''))
-  
-  sbid_04_predictions:
-    command: c(I(''))
+  sbid_03_drivers:
+    command: c(I('XX_sb_id_drivers')) #  
 
-
+  sbid_04_forecasts:
+    command: c(I('XX_sb_id_forecasts')) # 

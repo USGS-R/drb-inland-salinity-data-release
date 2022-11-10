@@ -1,7 +1,7 @@
 zip_this <- function(out_file, .object){
   if ('data.frame' %in% class(.object)){
     filepath <- basename(out_file) %>% tools::file_path_sans_ext() %>% paste0('.csv') %>% file.path(tempdir(), .)
-    write_csv(.object, path = filepath)
+    write_csv(.object, file = filepath)
     zip_this(out_file = out_file, .object = filepath)
   } else if (class(.object) == 'character' & all(file.exists(.object))){
     # works for single or multiple files
@@ -37,7 +37,7 @@ get_distance_matrix <- function(out_file, in_file) {
     mutate(from = from) %>%
     select(from, everything())
 
-  readr::write_csv(out, path = out_file)
+  readr::write_csv(out, file = out_file)
 }
 
 get_sntemp_output <- function(out_file, in_file){
@@ -52,7 +52,6 @@ extract_reach_attributes <- function(res_file, attr_file, out_file) {
 
   out <- left_join(res, select(attr, -subseg_updown, -start_pt, -end_pt, -to_subseg)) %>%
     mutate(subseg_length = round(subseg_length, 2))
-    
 
   readr::write_csv(out, out_file)
 
@@ -91,23 +90,6 @@ filter_res_ids <- function(in_file, out_file, res_keep) {
   readr::write_csv(dat, out_file)
 }
 
-#' Call gd_get (without any scipiper target builds) on a file in another repo on
-#' this file system, downloading that file from a shared Drive cache into that
-#' other repo
-#'
-#' @param ind_file the indicator file of the data file in the other repo, to be
-#'   downloaded to the corresponding location in that other repo
-#' @param repo the relative file path of the other repo. Usually it'll be right
-#'   alongside the current repo, e.g., '../lake-temperature-model-prep'
-gd_get_elsewhere <- function(ind_file, repo, ...) {
-  # switch to the elsewhere repo, with plans to always switch back to this one before exiting the function
-  this_repo <- getwd()
-  on.exit(setwd(this_repo))
-  setwd(repo)
-
-  # fetch the file down to that elsewhere repo
-  gd_get(ind_file, ...)
-}
 
 # Write a layer of an sf object as a zipped-up shapefile
 sf_to_zip <- function(zip_filename, sf_object, layer_name){
@@ -162,7 +144,9 @@ combine_level_sources <- function(out_csv, nwis_levels, nyc_levels, hist_levels)
     arrange(site_id, date) %>%
     group_by(site_id) %>%
     mutate(surface_elevation_m = na.approx(surface_elevation_m)) %>%
-    mutate(data_type = ifelse(is.na(data_type), 'daily interpolated', data_type))
+    mutate(data_type = ifelse(is.na(data_type), 'daily interpolated', data_type),
+           source = ifelse(is.na(source), 'interpolated', source)) %>%
+    select(-source_id)
 
   out_dat$surface_elevation_m <- round(out_dat$surface_elevation_m, 2)
   readr::write_csv(out_dat, out_csv)

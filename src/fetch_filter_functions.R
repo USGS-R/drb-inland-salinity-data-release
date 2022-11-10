@@ -6,36 +6,39 @@
 # navigates you into another repo and the part that should be used to call
 # gd_get within that repo.
 
-fetch_filter_res_polygons <- function(out_rds, in_ind, in_repo, site_ids) {
+fetch_filter_res_polygons <- function(out_rds, in_dat, site_ids, in_repo = NULL) {
   # pull the data file down to that other repo
-  gd_get_elsewhere(gsub(in_repo, '', in_ind, fixed=TRUE), in_repo)
-
+  if(!is.null(in_repo)){
+  gd_get_elsewhere(gsub(in_repo, '', in_dat, fixed=TRUE), in_repo)
+  }
+  
+  if(endsWith(in_dat, 'rds.ind')){
+    data <- as_data_file(in_dat) }
+  if(endsWith(in_dat, '.rds')){
+    data <- in_dat} 
+  else{stop('in_dat should be rds file of indicator rds file (rds.ind)')}
+  
   # read and filter to just the specified sites
-  as_data_file(in_ind) %>%
+  data %>%
     readRDS() %>%
     filter(site_id %in% !!site_ids) %>%
     st_zm(drop = TRUE, what = "ZM") # the canonical lakes file has 3D multipolygons but the Z range is 0 to 0, so let's drop it down to 2D
   # return object rather than writing file as other functions in this .R file do
 }
 
-fetch_filter_tibble <- function(out_csv, in_ind, in_repo, site_ids) {
-  # pull the data file down to that other repo
-  gd_get_elsewhere(gsub(in_repo, '', in_ind, fixed=TRUE), in_repo)
+fetch_filter_tibble <- function(out_csv, in_dat, site_ids) {
 
   # read and filter to just the specified sites
-  as_data_file(in_ind) %>%
-    readRDS() %>%
+  readRDS(in_dat) %>%
     filter(site_id %in% !!site_ids) %>%
     readr::write_csv(out_csv)
 }
 
-fetch_filter_nycdep <- function(out_rds, in_ind, in_repo, site_ids) {
+fetch_filter_nycdep <- function(out_rds, in_dat, site_ids) {
   # pull the data file down to that other repo
-  gd_get_elsewhere(gsub(in_repo, '', in_ind, fixed=TRUE), in_repo)
 
   # read and filter to just the specified sites
-  nycdep_data <- as_data_file(in_ind) %>%
-    readRDS() %>%
+  nycdep_data <- readRDS(in_dat) %>%
     filter(site_id %in% !!site_ids)
 
   # filter out erroneous Pepacton observation and save as rds
@@ -43,12 +46,11 @@ fetch_filter_nycdep <- function(out_rds, in_ind, in_repo, site_ids) {
     saveRDS(out_rds)
 }
 
-fetch_filter_historical <- function(out_rds, in_ind, in_repo, xwalk) {
-  # pull the data file down to that other repo
-  gd_get_elsewhere(gsub(in_repo, '', in_ind, fixed=TRUE), in_repo)
+fetch_filter_historical <- function(out_rds, in_dat, xwalk) {
+
 
   # read and filter to just the specified sites
-  as_data_file(in_ind) %>%
+  in_dat %>%
     readr::read_csv(col_types = 'ccnnncnnnnnnnnnc') %>%
     mutate(site_id = xwalk[reservoir]) %>%
     filter(site_id %in% as.character(xwalk)) %>%
@@ -117,4 +119,5 @@ copy_filter_feather <- function(out_csv, in_feather, site_ids) {
   arrow::read_feather(in_feather) %>%
     filter(res_id %in% site_ids) %>%
     readr::write_csv(out_csv)
+
 }

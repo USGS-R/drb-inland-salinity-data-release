@@ -2,23 +2,27 @@ title: >-
   Estimating Stream Salinity Impairment Across the Delaware River Basin Using Space- and Time-Aware Machine Learning 
 
 abstract: >-
-  [CHANGE] This data release contains information to support water quality modeling in the Delaware River Basin (DRB).
-  These data support both process-based and machine learning approaches to water quality modeling, including
-  the prediction of stream temperature. Reservoirs in the DRB serve an important role as a source of drinking
-  water, but also affect downstream water quality. Therefore, this data release includes data that
-  characterize both rivers and a subset of reservoirs in the basin. This release provides an update
-  to many of the files provided in a previous data release (Oliver et al., 2021).
+
+  Stream salinity has been increasing for the last four decades across the Delaware River Basin (DRB), 
+  partially due to groundwater storage and release of road salt that is applied for deicing. If left unmanaged,
+  this can have proximate consequences for infrastructure and ecosystems. This data release contains data used for
+  by the Machine learning models aimed at integrating finer-scale spacio-temporal dynamics to estimate stream salinity across
+  the Delaware River Basin and provide insight into salinity-impaired reaches and the processes that drive changes in stream salinity across the DRB,
+  which is critical to informed salinity management. This data release includes data that characterize both
+  rivers and a subset of reservoirs in the basin.
+  
 
   The data are stored in 4 child folders: 1) spatial information, 2) observations, and 3) model driver data, 4) predictions
 
-  [CHANGE] <li><a href="https://www.sciencebase.gov/catalog/item/623e54c4d34e915b67d83580"> 1) Spatial Information </a>- Spatial data used for modeling efforts in the Delaware River Basin</li> -
+  <li><a href="https://www.sciencebase.gov/catalog/item/XX"> 1) Spatial Information </a>- [CHANGE] Spatial data used for modeling efforts in the Delaware River Basin</li> -
   a shapefile of polylines for the river segments, point data for observation locations, and polygons for the three (Pepacton, Cannonsville, and Neversink) reservoirs in this dataset.
-  <li><a href="https://www.sciencebase.gov/catalog/item/623e550ad34e915b67d8366e"> 2) Observations </a>- Reservoir (surface levels, releases, diversions, water temperature) and river (water temperature and flow)
+  <li><a href="https://www.sciencebase.gov/catalog/item/XX"> 2) Observations </a>- [CHANGE] Reservoir (surface levels, releases, diversions, water temperature) and river (water temperature and flow)
   observations that can be used to train and test water quality models. </li>
-  <li><a href="https://www.sciencebase.gov/catalog/item/623e5587d34e915b67d83806"> 3) Model driver data </a>- Driver data used to force water quality models, including
+  <li><a href="https://www.sciencebase.gov/catalog/item/XX"> 3) Model driver data </a>- [CHANGE] Driver data used to force water quality models, including
   stream reach distance matrices and daily meteorology data from NOAA GEFS and gridMET. This child item also
   includes the inputs and outputs of an uncalibrated run of PRMS-SNTemp which predicts mean water temperature
   at all reaches in the DRB.
+  <li><a href="https://www.sciencebase.gov/catalog/item/XX"> 3) Predictions </a>- 
 
   This data compilation was funded by the USGS.
 

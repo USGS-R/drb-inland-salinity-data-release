@@ -1,8 +1,8 @@
 include:
    - 1_spatial.yml
    - 2_observations.yml
-   - 3_drivers.yml
-   - 4_forecasts.yml
+   - 3_driver.yml
+   - 4_predictions.yml
 
 packages:
   - yaml
@@ -29,20 +29,20 @@ targets:
     depends:
       - 00_parent_sb_xml
       
-      - 01_spatial_sb_xml
-      - 01_spatial_sb_data
-#      - log/01_spatial_sb_data.csv
-      
-      - 02_observations_sb_data
-      - 02_observations_sb_xml
-#      - log/02_observations_sb_data.csv
-      
-      - 03_drivers_sb_xml
-      - 03_drivers_sb_data
-#      - log/03_drivers_sb_data.csv
-      
-      - 04_forecasts_sb_xml
-      - 04_forecasts_sb_data
+#       - 01_spatial_sb_xml
+#       - 01_spatial_sb_data
+# #      - log/01_spatial_sb_data.csv
+# 
+#       - 02_observations_sb_data
+#       - 02_observations_sb_xml
+# #      - log/02_observations_sb_data.csv
+# 
+#       - 03_drivers_sb_xml
+#       - 03_drivers_sb_data
+# #      - log/03_drivers_sb_data.csv
+# 
+#       - 04_predictions_sb_xml
+#       - 04_predictions_sb_data
 #     - log/04_forecasts_sb_data.csv
 #     - 04_inputs_sb_meteo
 
@@ -99,7 +99,8 @@ targets:
   01_spatial_sb_data:
     command: sb_replace_files(
       sb_id = sbid_01_spatial,
-      "out_data/XX_geospatial_area_WG84.zip"
+      "out_data/XX_geospatial_area_WG84.zip",
+      geospatial_area_metadata
       )
       
   ### Push all spatial data + metadata xml to sb
@@ -135,7 +136,8 @@ targets:
   02_observations_sb_data:
     command: sb_replace_files(
       sbid_02_observations,
-      "out_data/XX_observations.zip"
+      "out_data/XX_observations.zip",
+      geospatial_area_metadata
       )
   
   ## Push all obs data + metadata xml to sb via log file 
@@ -154,7 +156,7 @@ targets:
     command: render(
       filename = target_name,
       "in_text/text_SHARED.yml",
-      "in_text/text_03_drivers.yml",
+      "in_text/text_03_driver.yml",
       geospatial_area_metadata
       )
   
@@ -164,7 +166,7 @@ targets:
       sbid_03_drivers,
       xml_file = I('03_drivers.xml'),
       "in_text/text_SHARED.yml",
-      "in_text/text_03_drivers.yml",
+      "in_text/text_03_driver.yml",
       geospatial_area_metadata
       )
 
@@ -173,7 +175,8 @@ targets:
     command: sb_replace_files(
       sbid_03_drivers,
       'out_data/XX_driver_data_1.zip',
-      'out_data/XX_driver_data_2.zip'
+      'out_data/XX_driver_data_2.zip',
+      geospatial_area_metadata
       )
       
   ## Push all driver data + metadata xml to sb via log file 
@@ -190,28 +193,28 @@ targets:
 
 ## FORECASTS ## 
  ## Build metadata xml for forecasts and save locally to out_xml
-  out_xml/04_forecasts.xml:
+  out_xml/04_predictions.xml:
     command: render(
       filename = target_name,
       "in_text/text_SHARED.yml",
-      "in_text/text_04_forecasts.yml",
+      "in_text/text_04_predictions.yml",
       geospatial_area_metadata
       )
 
  ## Push forecasts metadata to sciencebase
-  04_forecasts_sb_xml:
+  04_predictions_sb_xml:
     command: sb_render_post_xml(
-      sbid_04_forecasts,
-      xml_file = I('04_forecasts.xml'),
+      sbid_04_predictions,
+      xml_file = I('04_predictions.xml'),
       "in_text/text_SHARED.yml",
-      "in_text/text_04_forecasts.yml",
+      "in_text/text_04_predictions.yml",
        geospatial_area_metadata
        )
   
   ## Push forecasts data to sciencebase 
-  04_forecasts_sb_data:
+  04_predictions_sb_data:
     command: sb_replace_files(
-      sbid_04_forecasts,
+      sbid_04_predictions,
       'out_data/XX_forecasts1.zip',
       'out_data/XX_forecasts2.zip'
       )
@@ -231,16 +234,16 @@ targets:
   # ------ SB IDs --------
 
   sbid_00_parent:
-    command: c(I('XX_sb_id_parent')) # 
+    command: c(I('6365866cd34ebe442507d0c7')) # 6365866cd34ebe442507d0c7
 
   sbid_01_spatial:
-    command: c(I('XX_sb_id_spatial')) # 
+    command: c(I('63658810d34ebe442507d0d0')) # 
 
   sbid_02_observations:
-    command: c(I('XX_sb_id_observations')) # 
+    command: c(I('6365882fd34ebe442507d0d3')) # 
 
   sbid_03_drivers:
-    command: c(I('XX_sb_id_drivers')) #  
+    command: c(I('6365886bd34ebe442507d0d5')) #  
 
-  sbid_04_forecasts:
-    command: c(I('XX_sb_id_forecasts')) # 
+  sbid_04_predictions:
+    command: c(I('6365887ad34ebe442507d0d7')) # 
